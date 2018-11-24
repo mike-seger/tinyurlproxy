@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 @Table
 @Entity
@@ -13,6 +14,7 @@ public class TinyUrl {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+    @NotNull
 	private String originalUrl;
 	@Transient
 	private String hashedKey;

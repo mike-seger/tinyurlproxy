@@ -1,6 +1,7 @@
 package com.net128.app.tinyurl;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,18 +20,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class Controller {
 	
 	@Autowired
-	Repository tinyUrlRepository;
+	private Repository tinyUrlRepository;
 	
-	@PostMapping(value = "api/tinyUrl", produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<TinyUrl> createTinyUrl(@RequestBody ObjectNode json) {
-		
-		TinyUrl tinyUrl = new TinyUrl(json.get("originalUrl").asText());
+	@PostMapping(value = "api/tinyurl", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<TinyUrl> createTinyUrl(@RequestBody @Valid TinyUrl tinyUrlIn) {
+		TinyUrl tinyUrl = new TinyUrl(tinyUrlIn.getOriginalUrl());
 		tinyUrl = tinyUrlRepository.save(tinyUrl);
 		return new ResponseEntity<TinyUrl>(tinyUrl, HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(value = "api/tinyUrl/{hashedKey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<TinyUrl> createTinyUrl(@PathVariable("hashedKey") String hashedKey) {
+	@RequestMapping(value = "api/tinyurl/{hashedkey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<TinyUrl> createTinyUrl(@PathVariable("hashedkey") String hashedKey) {
 		TinyUrl tinyUrl = this.tinyUrlRepository.findOne(TinyUrl.getIdFromHashedKey(hashedKey));
 		if(tinyUrl != null) {
 			return new ResponseEntity<TinyUrl>(tinyUrl, HttpStatus.OK);
@@ -39,15 +39,14 @@ public class Controller {
 		}
 	}
 	
-	@RequestMapping(value = "api/tinyUrl/{hashedKey}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Void> deleteTinyUrl(@PathVariable("hashedKey") String hashedKey) {
-		
+	@RequestMapping(value = "api/tinyurl/{hashedkey}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Void> deleteTinyUrl(@PathVariable("hashedkey") String hashedKey) {
 		this.tinyUrlRepository.delete(TinyUrl.getIdFromHashedKey(hashedKey));
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 	
-	@RequestMapping(value = "go/{hashedKey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public void redirectUserToOriginalUrl(@PathVariable("hashedKey") String hashedKey, HttpServletResponse response) {
+	@RequestMapping(value = "go/{hashedkey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public void redirectUserToOriginalUrl(@PathVariable("hashedkey") String hashedKey, HttpServletResponse response) {
 		TinyUrl tinyUrl = this.tinyUrlRepository.findOne(TinyUrl.getIdFromHashedKey(hashedKey));
 		if(tinyUrl != null) {
 			tinyUrl.setTimesAccessed(tinyUrl.getTimesAccessed()+1);
