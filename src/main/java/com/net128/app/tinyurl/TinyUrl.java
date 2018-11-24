@@ -1,4 +1,4 @@
-package com.pmaher.model;
+package com.net128.app.tinyurl;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 
 @Table
 @Entity
-public class ShortUrl {
+public class TinyUrl {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -21,11 +21,11 @@ public class ShortUrl {
 	private static final String CHARACTER_MAP = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final int BASE = CHARACTER_MAP.length();
 	
-	public ShortUrl() {
+	public TinyUrl() {
 		super();
 	}
 	
-	public ShortUrl(String originalUrl) {
+	public TinyUrl(String originalUrl) {
 		this.originalUrl = originalUrl;
 	}
 	
@@ -54,7 +54,7 @@ public class ShortUrl {
 	}
 
 	public String getHashedKey() {
-		return ShortUrl.getHashedKeyFromId(this.id);
+		return TinyUrl.getHashedKeyFromId(this.id);
 	}
 	
 	public void setHashedKey(String key) {

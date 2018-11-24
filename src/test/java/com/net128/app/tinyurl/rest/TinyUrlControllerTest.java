@@ -1,4 +1,4 @@
-package com.pmaher.rest;
+package com.net128.app.tinyurl.rest;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.BDDMockito.given;
@@ -13,6 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.net128.app.tinyurl.Controller;
+import com.net128.app.tinyurl.TinyUrl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -29,9 +31,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.pmaher.app.Application;
-import com.pmaher.model.ShortUrl;
-import com.pmaher.service.ShortUrlRepository;
+import com.net128.app.tinyurl.Application;
+import com.net128.app.tinyurl.Repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -39,59 +40,59 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ContextConfiguration(classes=Application.class)
 @WebAppConfiguration
 @AutoConfigureMockMvc
-public class ShortUrlControllerTest {
+public class TinyUrlControllerTest {
 	
 	@Autowired
-	ShortUrlController shortUrlController;
+	Controller tinyUrlController;
 	
 	@Autowired
 	private MockMvc mockMvc;
 	
 	@MockBean
-	ShortUrlRepository shortUrlRepository;
+	Repository tinyUrlRepository;
 	
 	@Test
-	public void testCreateShortUrl() throws Exception {
-    	ShortUrl shortUrl = new ShortUrl("http://testing.com/");
-    	shortUrl.setId(999L);
-    	shortUrl.setTimesAccessed(0);
+	public void testCreateTinyUrl() throws Exception {
+    	TinyUrl tinyUrl = new TinyUrl("http://testing.com/");
+    	tinyUrl.setId(999L);
+    	tinyUrl.setTimesAccessed(0);
     	
-    	given(this.shortUrlRepository.save(any(ShortUrl.class))).willReturn(shortUrl);
+    	given(this.tinyUrlRepository.save(any(TinyUrl.class))).willReturn(tinyUrl);
     	ObjectMapper mapper = new ObjectMapper();
-    	String shortUrlAsJSON = mapper.writeValueAsString(shortUrl);
-    	System.out.println(shortUrlAsJSON);
-		//WHEN making an http request to create a shortUrl
-    	MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/shortUrl")
+    	String tinyUrlAsJSON = mapper.writeValueAsString(tinyUrl);
+    	System.out.println(tinyUrlAsJSON);
+		//WHEN making an http request to create a tinyUrl
+    	MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/tinyUrl")
     			.contentType(MediaType.APPLICATION_JSON_VALUE)
-    			.content(shortUrlAsJSON)
+    			.content(tinyUrlAsJSON)
     			.accept(MediaType.APPLICATION_JSON_VALUE);
     	
     	ResultActions resultActions = mockMvc.perform(builder);
     	
-    	//THEN expect the newly created shortUrl to be returned
+    	//THEN expect the newly created tinyUrl to be returned
     	resultActions
     		.andExpect(status().isCreated())
 	    	.andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.id").value(999))
-            .andExpect(jsonPath("$.originalUrl").value(shortUrl.getOriginalUrl()))
+            .andExpect(jsonPath("$.originalUrl").value(tinyUrl.getOriginalUrl()))
             .andExpect(jsonPath("$.hashedKey").value("qh"))
-            .andExpect(jsonPath("$.timesAccessed").value(shortUrl.getTimesAccessed()));
+            .andExpect(jsonPath("$.timesAccessed").value(tinyUrl.getTimesAccessed()));
 
 	}
 	
 	@Test
-	public void testGetShortUrlByHashedKey() throws Exception {
-		ShortUrl shortUrl = new ShortUrl("testing.com");
-		shortUrl.setId(7628L);
-		shortUrl.setHashedKey("b9c");
-		shortUrl.setTimesAccessed(3);
-		given(this.shortUrlRepository.findOne(7628L)).willReturn(shortUrl);
+	public void testGetTinyUrlByHashedKey() throws Exception {
+		TinyUrl tinyUrl = new TinyUrl("testing.com");
+		tinyUrl.setId(7628L);
+		tinyUrl.setHashedKey("b9c");
+		tinyUrl.setTimesAccessed(3);
+		given(this.tinyUrlRepository.findOne(7628L)).willReturn(tinyUrl);
 		
-		//WHEN making an http request to create a shortUrl
-		this.mockMvc.perform(get("/api/shortUrl/b9c")
+		//WHEN making an http request to create a tinyUrl
+		this.mockMvc.perform(get("/api/tinyUrl/b9c")
 							.accept(MediaType.APPLICATION_JSON_VALUE)
 							.contentType(MediaType.APPLICATION_JSON_VALUE))
-							//THEN expect the newly created shortUrl to be returned
+							//THEN expect the newly created tinyUrl to be returned
 							.andExpect(status().isOk())
 							.andExpect(content().contentType("application/json;charset=UTF-8"))
 				            .andExpect(jsonPath("$.id").value(7628))
@@ -101,43 +102,43 @@ public class ShortUrlControllerTest {
 	}
 	
 	@Test
-	public void testGetShortUrlByHashedKeyNotFound() throws Exception {
-		ShortUrl shortUrl = new ShortUrl("testing.com");
-		shortUrl.setId(7628L);
-		shortUrl.setHashedKey("b9c");
-		shortUrl.setTimesAccessed(3);
-		given(this.shortUrlRepository.findOne(7628L)).willReturn(null);
+	public void testGetTinyUrlByHashedKeyNotFound() throws Exception {
+		TinyUrl tinyUrl = new TinyUrl("testing.com");
+		tinyUrl.setId(7628L);
+		tinyUrl.setHashedKey("b9c");
+		tinyUrl.setTimesAccessed(3);
+		given(this.tinyUrlRepository.findOne(7628L)).willReturn(null);
 		
-		//WHEN making an http request to create a shortUrl
-		this.mockMvc.perform(get("/api/shortUrl/b9c")
+		//WHEN making an http request to create a tinyUrl
+		this.mockMvc.perform(get("/api/tinyUrl/b9c")
 							.accept(MediaType.APPLICATION_JSON_VALUE)
 							.contentType(MediaType.APPLICATION_JSON_VALUE))
-							//THEN expect the newly created shortUrl to be returned
+							//THEN expect the newly created tinyUrl to be returned
 							.andExpect(status().isNoContent());
 	}
 	
 	@Test
-	public void testDeleteShortUrl() throws Exception {
+	public void testDeleteTinyUrl() throws Exception {
 		
-		//WHEN making an http request to create a shortUrl
-		this.mockMvc.perform(delete("/api/shortUrl/b9c"))
-							//THEN expect the shortUrl to be deleted
+		//WHEN making an http request to create a tinyUrl
+		this.mockMvc.perform(delete("/api/tinyUrl/b9c"))
+							//THEN expect the tinyUrl to be deleted
 							.andExpect(status().isNoContent());	
 		
-		verify(shortUrlRepository, times(1)).delete(ShortUrl.getIdFromHashedKey("b9c"));
+		verify(tinyUrlRepository, times(1)).delete(TinyUrl.getIdFromHashedKey("b9c"));
 	}
 
 	@Test
 	public void testRedirectUserToOriginalUrlAndIncrementsTimesAccessed() throws Exception {
-		ShortUrl expected = new ShortUrl("testing.com");
+		TinyUrl expected = new TinyUrl("testing.com");
 		expected.setId(7628L);
 		expected.setTimesAccessed(4);
 		
-		ShortUrl shortUrl = new ShortUrl("testing.com");
-		shortUrl.setId(7628L);
-		shortUrl.setHashedKey("b9c");
-		shortUrl.setTimesAccessed(3);
-		given(this.shortUrlRepository.findOne(7628L)).willReturn(shortUrl);
+		TinyUrl tinyUrl = new TinyUrl("testing.com");
+		tinyUrl.setId(7628L);
+		tinyUrl.setHashedKey("b9c");
+		tinyUrl.setTimesAccessed(3);
+		given(this.tinyUrlRepository.findOne(7628L)).willReturn(tinyUrl);
 		
 		//WHEN making an http request to navigate through a short url
 		this.mockMvc.perform(get("/go/b9c"))
@@ -147,16 +148,16 @@ public class ShortUrlControllerTest {
 							.andExpect(header().string("Cache-Control", equalTo("no-cache, no-store, must-revalidate")))
 							.andExpect(header().string("Pragma", equalTo("no-cache")))
 							.andExpect(header().string("Expires", equalTo("0")))
-							.andExpect(header().string("Location", equalTo(shortUrl.getOriginalUrl())));
+							.andExpect(header().string("Location", equalTo(tinyUrl.getOriginalUrl())));
 		
-		verify(shortUrlRepository, times(1)).save(argThat(new ShortUrlMatcher(expected)));
+		verify(tinyUrlRepository, times(1)).save(argThat(new TinyUrlMatcher(expected)));
 	}
 	
 
 	@Test
 	public void testNotFoundWhenRedirectingUserToOriginalUrl() throws Exception {
 		
-		given(this.shortUrlRepository.findOne(7628L)).willReturn(null);
+		given(this.tinyUrlRepository.findOne(7628L)).willReturn(null);
 		
 		//WHEN making an http request to navigate through a short url
 		this.mockMvc.perform(get("/go/b9c"))
@@ -164,20 +165,20 @@ public class ShortUrlControllerTest {
 							.andExpect(status().isNoContent());
 	}
 	
-	public class ShortUrlMatcher extends ArgumentMatcher<ShortUrl> {
+	public class TinyUrlMatcher extends ArgumentMatcher<TinyUrl> {
 		 
-	    private ShortUrl expectedShortUrl;
+	    private TinyUrl expectedTinyUrl;
 	    
-	    public ShortUrlMatcher(ShortUrl shortUrl) {
-	    	this.expectedShortUrl = shortUrl;
+	    public TinyUrlMatcher(TinyUrl tinyUrl) {
+	    	this.expectedTinyUrl = tinyUrl;
 	    }
 
 		@Override
 		public boolean matches(Object actual) {
-			ShortUrl actualShortUrl = (ShortUrl) actual;
-			return expectedShortUrl.getOriginalUrl().equals(actualShortUrl.getOriginalUrl())
-					&& expectedShortUrl.getId().equals(actualShortUrl.getId())
-					&& expectedShortUrl.getOriginalUrl().equals(actualShortUrl.getOriginalUrl());
+			TinyUrl actualTinyUrl = (TinyUrl) actual;
+			return expectedTinyUrl.getOriginalUrl().equals(actualTinyUrl.getOriginalUrl())
+					&& expectedTinyUrl.getId().equals(actualTinyUrl.getId())
+					&& expectedTinyUrl.getOriginalUrl().equals(actualTinyUrl.getOriginalUrl());
 		}
 	}
 
