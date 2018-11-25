@@ -1,43 +1,38 @@
 
-# Tiny URL Proxy API
+# Tiny (short) URL Proxy API
 
-A RESTful API that can be used to shorten a lengthy URL
+A RESTful API that can be used to access resources through a short URL  
+In contrast to similar tools it does not just redirect to the long URL, but it acts as the proxy instead.  
+The long URL is not visible to the client. 
 
-# The operations supported
+# These operations supported
 
 * Create a tiny URL from a long URL
 ```
-$ curl -H "Content-Type: application/json" -d '{"url": "http://www.npr.org"}' http://localhost:8081/api/tinyurl
+$ curl -H "Content-Type: application/json" -d '{"url": "http://www.google.com/"}' http://localhost:8081/api/tinyurl
+{
+  "id": 1,
+  "url": "https://www.google.com/",
+  "hashedKey": "ipkfwz"
+}
 ```
-* Retrieve the original URL and number of times it's been accessed from a tiny URL (assuming 'vbynaj' is the tiny url)
+* Access the resource behind the long URL using the tiny URL through the API
 ```
-$ curl http://localhost:8081/api/tinyurl/vbynaj
-```
-* Redirect a user to the long URL when they access the short URL from your API
-```
-$ curl -D - http://localhost:8081/go/vbynaj
+$ curl http://localhost:8081/go/ipkfwz
 ```
 * Delete a shortened URL
 ```
-curl --request DELETE http://localhost:8081/api/tinyurl/vbynaj
+curl -X DELETE http://localhost:8081/api/tinyurl/ipkfwz
 ```
-
-Unit and Integration tests provided
-
-You can assume that if a user has access to your API that they are authorized to execute any operation mentioned above
-
 
 # Setup
 
-This uses Spring Boot configured to talk to an in memory H2 database to store the results
-
-Jackson is included to provide JSON serialization and deserialization
+The default configuration uses Spring Boot configured to talk to an in memory H2 database to store the results
+The built war file is also an executable jar with an embedded tomcat >= 9.x
 
 ## Dependencies
 
-This project uses [Maven](https://maven.apache.org) for builds.
-
-You need Java 8 installed.
+You need Java 8+ installed.
 
 
 ## Building
@@ -55,11 +50,14 @@ You can run the app through Maven:
 $ mvn spring-boot:run
 ```
 
-or you can run the jar file from the build:
+or you can run the war file from the build:
 
 ```
-$ java -jar target/tiny-urlproxy-1.0.0-SNAPSHOT.jar
+$ java -jar target/tiny-urlproxy-1.0.0-SNAPSHOT.war
 ```
+
+**Note for IntelliJ:**  
+Click the Maven Projects tab/button on the right side of IntelliJ, and under Profiles, select intellij. This helps IntelliJ to use the tomcat dependencies when running the application.
 
 
 
