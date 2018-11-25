@@ -1,11 +1,6 @@
 package com.net128.app.tinyurl;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Table
@@ -15,20 +10,17 @@ public class TinyUrl {
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
     @NotNull
-	private String originalUrl;
-	@Transient
+	private String url;
+	@NotNull
 	private String hashedKey;
 	private int timesAccessed;
-	
-	private static final String CHARACTER_MAP = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	private static final int BASE = CHARACTER_MAP.length();
 	
 	public TinyUrl() {
 		super();
 	}
 	
-	public TinyUrl(String originalUrl) {
-		this.originalUrl = originalUrl;
+	public TinyUrl(String url) {
+		this.url = url;
 	}
 	
 	public Long getId() {
@@ -39,12 +31,12 @@ public class TinyUrl {
 		this.id = id;
 	}
 
-	public String getOriginalUrl() {
-		return originalUrl;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setOriginalUrl(String originalUrl) {
-		this.originalUrl = originalUrl;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public int getTimesAccessed() {
@@ -56,34 +48,10 @@ public class TinyUrl {
 	}
 
 	public String getHashedKey() {
-		return TinyUrl.getHashedKeyFromId(this.id);
+		return hashedKey;
 	}
 	
 	public void setHashedKey(String key) {
 		this.hashedKey = key;
 	}
-	
-	public static Long getIdFromHashedKey(String hashedKey) {
-		int hashedKeyLen = hashedKey.length();
-		long idToReturn = 0L;
-		
-		for(int power = hashedKeyLen-1; power >= 0; power--) {
-			char theCharacter = hashedKey.charAt((hashedKeyLen-1) - power);
-			int multiplier = CHARACTER_MAP.indexOf(theCharacter);
-			idToReturn += (multiplier * Math.pow(BASE, power));
-		}
-		return idToReturn;
-	}
-	
-	public static String getHashedKeyFromId(Long id) {
-		StringBuilder builder = new StringBuilder();
-		int num = id.intValue();
-		while(num > 0) {
-			int remainder = num % BASE;
-			num = num / BASE;
-			builder.append(CHARACTER_MAP.charAt(remainder));
-		}
-		return builder.reverse().toString();
-	}
-
 }

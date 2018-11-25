@@ -74,7 +74,7 @@ public class TinyUrlControllerTest {
     		.andExpect(status().isCreated())
 	    	.andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.id").value(999))
-            .andExpect(jsonPath("$.originalUrl").value(tinyUrl.getOriginalUrl()))
+            .andExpect(jsonPath("$.originalUrl").value(tinyUrl.getUrl()))
             .andExpect(jsonPath("$.hashedKey").value("qh"))
             .andExpect(jsonPath("$.timesAccessed").value(tinyUrl.getTimesAccessed()));
 
@@ -125,7 +125,7 @@ public class TinyUrlControllerTest {
 							//THEN expect the tinyUrl to be deleted
 							.andExpect(status().isNoContent());	
 		
-		verify(tinyUrlRepository, times(1)).delete(TinyUrl.getIdFromHashedKey("b9c"));
+		verify(tinyUrlRepository, times(1)).delete(tinyUrlRepository.findByHashedKey("b9c"));
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class TinyUrlControllerTest {
 							.andExpect(header().string("Cache-Control", equalTo("no-cache, no-store, must-revalidate")))
 							.andExpect(header().string("Pragma", equalTo("no-cache")))
 							.andExpect(header().string("Expires", equalTo("0")))
-							.andExpect(header().string("Location", equalTo(tinyUrl.getOriginalUrl())));
+							.andExpect(header().string("Location", equalTo(tinyUrl.getUrl())));
 		
 		verify(tinyUrlRepository, times(1)).save(argThat(new TinyUrlMatcher(expected)));
 	}
@@ -176,9 +176,9 @@ public class TinyUrlControllerTest {
 		@Override
 		public boolean matches(Object actual) {
 			TinyUrl actualTinyUrl = (TinyUrl) actual;
-			return expectedTinyUrl.getOriginalUrl().equals(actualTinyUrl.getOriginalUrl())
+			return expectedTinyUrl.getUrl().equals(actualTinyUrl.getUrl())
 					&& expectedTinyUrl.getId().equals(actualTinyUrl.getId())
-					&& expectedTinyUrl.getOriginalUrl().equals(actualTinyUrl.getOriginalUrl());
+					&& expectedTinyUrl.getUrl().equals(actualTinyUrl.getUrl());
 		}
 	}
 

@@ -7,24 +7,19 @@ A RESTful API that can be used to shorten a lengthy URL
 
 * Create a tiny URL from a long URL
 ```
-$ curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"originalUrl": "http://www.npr.org"}' \
-  http://localhost:8081/api/tinyurl
+$ curl -H "Content-Type: application/json" -d '{"url": "http://www.npr.org"}' http://localhost:8081/api/tinyurl
 ```
-* Retrieve the original URL and number of times it's been accessed from a tiny URL (assuming 'b' is the tiny url)
+* Retrieve the original URL and number of times it's been accessed from a tiny URL (assuming 'vbynaj' is the tiny url)
 ```
-$ curl --request GET \
-  http://localhost:8081/api/tinyurl/b
+$ curl http://localhost:8081/api/tinyurl/vbynaj
 ```
 * Redirect a user to the long URL when they access the short URL from your API
 ```
-$ curl -D -   http://localhost:8081/go/b
+$ curl -D - http://localhost:8081/go/vbynaj
 ```
 * Delete a shortened URL
 ```
-curl --request DELETE \
-  http://localhost:8081/api/tinyurl/b
+curl --request DELETE http://localhost:8081/api/tinyurl/vbynaj
 ```
 
 Unit and Integration tests provided
