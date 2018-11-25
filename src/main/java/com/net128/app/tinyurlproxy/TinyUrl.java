@@ -1,4 +1,4 @@
-package com.net128.app.tinyurl;
+package com.net128.app.tinyurlproxy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,11 +9,10 @@ public class TinyUrl {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-    @NotNull
+	@Column(unique=true, length=1024)
 	private String url;
-	@NotNull
+	@Column(unique=true)
 	private String hashedKey;
-	private int timesAccessed;
 	
 	public TinyUrl() {
 		super();
@@ -37,14 +36,6 @@ public class TinyUrl {
 
 	public void setUrl(String url) {
 		this.url = url;
-	}
-
-	public int getTimesAccessed() {
-		return timesAccessed;
-	}
-
-	public void setTimesAccessed(int timesAccessed) {
-		this.timesAccessed = timesAccessed;
 	}
 
 	public String getHashedKey() {

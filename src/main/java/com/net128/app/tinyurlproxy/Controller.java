@@ -1,8 +1,7 @@
-package com.net128.app.tinyurl;
+package com.net128.app.tinyurlproxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

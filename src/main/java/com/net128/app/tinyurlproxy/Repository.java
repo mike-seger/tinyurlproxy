@@ -1,4 +1,4 @@
-package com.net128.app.tinyurl;
+package com.net128.app.tinyurlproxy;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.repository.CrudRepository;

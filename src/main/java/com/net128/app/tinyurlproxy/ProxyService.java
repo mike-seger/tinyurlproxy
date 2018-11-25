@@ -1,4 +1,4 @@
-package com.net128.app.tinyurl;
+package com.net128.app.tinyurlproxy;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
